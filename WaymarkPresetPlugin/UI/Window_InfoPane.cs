@@ -11,7 +11,7 @@ internal sealed class WindowInfoPane : IDisposable
 {
     private Vector2 WindowSize;
 
-    private uint GameSlotDropdownSelection = 1;
+    private int GameSlotDropdownSelection = 1;
 
     private readonly PluginUI PluginUI;
     private readonly Configuration Configuration;
@@ -47,7 +47,7 @@ internal sealed class WindowInfoPane : IDisposable
                 ImGui.SetNextItemWidth(comboWidth);
                 if (ImGui.BeginCombo("###CopyToGameSlotNumberDropdown", $"{GameSlotDropdownSelection}"))
                 {
-                    for (uint i = 1; i <= MemoryHandler.MaxPresetSlotNum; ++i)
+                    for (var i = 1; i <= MemoryHandler.MaxPresetSlotNum; ++i)
                         if (ImGui.Selectable($"{i}"))
                             GameSlotDropdownSelection = i;
 
@@ -57,25 +57,9 @@ internal sealed class WindowInfoPane : IDisposable
                 var rightAlignPos = WindowSize.X;
                 var placeButtonText = Loc.Localize("Button: Place", "Place");
                 ImGui.SameLine(rightAlignPos - ImGui.CalcTextSize(placeButtonText).X - ImGui.GetStyle().WindowPadding.X - ImGui.GetStyle().FramePadding.X * 2);
-                if (MemoryHandler.FoundDirectPlacementSigs())
-                {
-                    if (ImGui.Button(placeButtonText + "###Place"))
-                        MemoryHandler.PlacePreset(Configuration.PresetLibrary.Presets[PluginUI.LibraryWindow.SelectedPreset].GetAsGamePreset() /*, mConfiguration.AllowClientSidePlacementInOverworldZones*/);
-                }
-                else
-                {
-                    ImGui.PushStyleColor(ImGuiCol.Button, ImGui.GetStyle().Colors[(int)ImGuiCol.Button] * 0.5f);
-                    ImGui.PushStyleColor(ImGuiCol.ButtonHovered, ImGui.GetStyle().Colors[(int)ImGuiCol.Button]);
-                    ImGui.PushStyleColor(ImGuiCol.ButtonActive, ImGui.GetStyle().Colors[(int)ImGuiCol.Button]);
-                    ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.TextDisabled]);
+                if (ImGui.Button(placeButtonText + "###Place"))
+                    MemoryHandler.PlacePreset(Configuration.PresetLibrary.Presets[PluginUI.LibraryWindow.SelectedPreset].GetAsGamePreset());
 
-                    ImGui.Button(placeButtonText + "###Place");
-
-                    ImGui.PopStyleColor();
-                    ImGui.PopStyleColor();
-                    ImGui.PopStyleColor();
-                    ImGui.PopStyleColor();
-                }
 
                 ImGui.Text(Loc.Localize("Info Pane Text: Preset Info Label", "Preset Info:"));
                 var mapViewButtonText = Loc.Localize("Button: Map View", "Map View");
@@ -124,7 +108,7 @@ internal sealed class WindowInfoPane : IDisposable
                 if (ImGui.Button(Loc.Localize("Button: Export to Clipboard", "Export to Clipboard") + "###Export to Clipboard"))
                 {
                     if (PluginUI.LibraryWindow.SelectedPreset >= 0 && PluginUI.LibraryWindow.SelectedPreset < Configuration.PresetLibrary.Presets.Count)
-                        Win32Clipboard.CopyTextToClipboard(WaymarkPresetExport.GetExportString(Configuration.PresetLibrary.Presets[PluginUI.LibraryWindow.SelectedPreset]));
+                        ImGui.SetClipboardText(WaymarkPresetExport.GetExportString(Configuration.PresetLibrary.Presets[PluginUI.LibraryWindow.SelectedPreset]));
                 }
 
                 ImGui.SameLine();
@@ -186,7 +170,7 @@ internal sealed class WindowInfoPane : IDisposable
             ImGui.SetNextItemWidth(comboWidth);
             if (ImGui.BeginCombo("###CopyToGameSlotNumberDropdown", $"{GameSlotDropdownSelection}"))
             {
-                for (uint i = 1; i <= MemoryHandler.MaxPresetSlotNum; ++i)
+                for (var i = 1; i <= MemoryHandler.MaxPresetSlotNum; ++i)
                     if (ImGui.Selectable($"{i}")) GameSlotDropdownSelection = i;
 
                 ImGui.EndCombo();
@@ -240,7 +224,7 @@ internal sealed class WindowInfoPane : IDisposable
         ImGui.End();
     }
 
-    private void CopyPresetToGameSlot(WaymarkPreset preset, uint slot)
+    private void CopyPresetToGameSlot(WaymarkPreset preset, int slot)
     {
         if (ZoneInfoHandler.IsKnownContentFinderID(preset.MapID) && slot >= 1 && slot <= MemoryHandler.MaxPresetSlotNum)
         {

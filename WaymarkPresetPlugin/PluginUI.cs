@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 using WaymarkPresetPlugin.UI;
 
 namespace WaymarkPresetPlugin
@@ -39,21 +39,21 @@ namespace WaymarkPresetPlugin
             if (LibraryZoneDragAndDropData == nint.Zero || LibraryPresetDragAndDropData == nint.Zero || EditWaymarkDragAndDropData == nint.Zero || EditWaymarkCoordDragAndDropData == nint.Zero)
                 throw new Exception("Error in PluginUI constructor: Unable to allocate memory for drag and drop info.");
 
-            //	Zero out the memory for debug purposes (we are using the zone drag and drop as a UInt16 for now, so keep the other bytes clean).
+            //	Zero out the memory for debug purposes (we are using the zone drag and drop as a ushort for now, so keep the other bytes clean).
             Marshal.WriteInt32(LibraryZoneDragAndDropData, 0);
             Marshal.WriteInt32(LibraryPresetDragAndDropData, 0);
             Marshal.WriteInt32(EditWaymarkDragAndDropData, 0);
             Marshal.StructureToPtr(Vector3.Zero, EditWaymarkCoordDragAndDropData, true);
 
             //	Load waymark icons.
-            WaymarkIconTextures[0] ??= Plugin.Texture.GetIcon(61241); //A
-            WaymarkIconTextures[1] ??= Plugin.Texture.GetIcon(61242); //B
-            WaymarkIconTextures[2] ??= Plugin.Texture.GetIcon(61243); //C
-            WaymarkIconTextures[3] ??= Plugin.Texture.GetIcon(61247); //D
-            WaymarkIconTextures[4] ??= Plugin.Texture.GetIcon(61244); //1
-            WaymarkIconTextures[5] ??= Plugin.Texture.GetIcon(61245); //2
-            WaymarkIconTextures[6] ??= Plugin.Texture.GetIcon(61246); //3
-            WaymarkIconTextures[7] ??= Plugin.Texture.GetIcon(61248); //4
+            WaymarkIconTextures[0] ??= Plugin.Texture.GetFromGameIcon(61241).RentAsync().Result; //A
+            WaymarkIconTextures[1] ??= Plugin.Texture.GetFromGameIcon(61242).RentAsync().Result; //B
+            WaymarkIconTextures[2] ??= Plugin.Texture.GetFromGameIcon(61243).RentAsync().Result; //C
+            WaymarkIconTextures[3] ??= Plugin.Texture.GetFromGameIcon(61247).RentAsync().Result; //D
+            WaymarkIconTextures[4] ??= Plugin.Texture.GetFromGameIcon(61244).RentAsync().Result; //1
+            WaymarkIconTextures[5] ??= Plugin.Texture.GetFromGameIcon(61245).RentAsync().Result; //2
+            WaymarkIconTextures[6] ??= Plugin.Texture.GetFromGameIcon(61246).RentAsync().Result; //3
+            WaymarkIconTextures[7] ??= Plugin.Texture.GetFromGameIcon(61248).RentAsync().Result; //4
 
             //	Make child windows.
             LibraryWindow = new(this, configuration, LibraryZoneDragAndDropData, LibraryPresetDragAndDropData);
